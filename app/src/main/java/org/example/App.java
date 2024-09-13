@@ -32,6 +32,7 @@ public class App {
         // for(int i=0;i<sss;i++) m.element(out[i], table, pointer,0);
         int k=0;
         for(int i=0; i<s;i++) for(int j=0;j<ss;j++){
+            System.out.println("navCSP part "+i);
             IntVar pointer = source[i].mul(ss).add(j).intVar(); // = pointer arithm
             m.element(out[k++], table, pointer,0).post();
         }
@@ -56,7 +57,7 @@ public class App {
     public static void main(String[] args) {
         // Problem Size
         int objects=20;
-        int n=10; //MaxCard
+        int n=3; //MaxCard
         int r=3; //navigations
         int magic =10; //how many attributes are the same
 
@@ -66,34 +67,47 @@ public class App {
         // Make Data
         int[] attribs = new int[objects];
         for(int i=0;i<objects;i++) attribs[i]= i%magic +10;
-        shuffleArray(attribs);
+        // shuffleArray(attribs);
         IntVar[][] attribTable = new IntVar[objects][1]; //objects number of variables of domain of size 1
         for(int i=0;i<objects;i++){
             attribTable[i][0] = m.intVar("attrib",attribs[i]);
+            System.out.println(attribTable[i][0].getValue());
         }
+
 
         IntVar[][] table = m.intVarMatrix("table",objects, n, 0, objects); //objectsXn variables of domain of size objects
         IntVar dummy = m.intVar(0);
 
-        IntVar[] vars = table[startObj];
-        for(int i=0;i<r;i++){
-            vars = navCSP(vars, table, 0, n, dummy);
-        }
-        vars = navCSP(vars, attribTable, 0, magic+10, dummy);
+        // IntVar[] vars = table[startObj];
+        // for(int i=0;i<r;i++){
+        //     vars = navCSP(vars, table, 0, n, dummy);
+        // }
+        IntVar[] vars = navCSP(table[startObj], attribTable, 0, magic+10, dummy);
 
         m.allDifferentExcept0(vars).post();
+        // m.allDifferent(vars).post();
 
-        IntVar sum = m.intVar(0, 1000);
+        IntVar sum = m.intVar("sum",0, 1000);
         m.sum(vars, "=", sum).post();
         m.setObjective(true, sum);
 
         m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.flatten(table)), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
-        Solution solution = m.getSolver().findSolution();
-        if(solution != null){
-            System.out.println(solution.toString());
-        } else {
-            System.out.println("mmmhh");
+
+        List<Solution> front = m.getSolver().findParetoFront(ArrayUtils.flatten(table),Model.MAXIMIZE); 
+        System.out.println("The pareto front has "+front.size()+" solutions : ");
+        for(Solution s: front){
+                System.out.println(s);
         }
+
+
+
+        // Solution solution = m.getSolver().findSolution();
+        // if(solution != null){
+        //     System.out.println(solution.toString());
+        // } else {
+        //     System.out.println("mmmhh");
+        // }
+
 
     }
 }
