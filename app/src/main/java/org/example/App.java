@@ -18,6 +18,7 @@ import org.chocosolver.util.tools.ArrayUtils;
 
 public class App {
     static Model m = new Model();
+    static int elem = 0;
 
 
     static IntVar[] navCSP(IntVar[] source, IntVar[][] sources, int lb, int ub, IntVar dummy){
@@ -32,7 +33,7 @@ public class App {
         // for(int i=0;i<sss;i++) m.element(out[i], table, pointer,0);
         int k=0;
         for(int i=0; i<s;i++) for(int j=0;j<ss;j++){
-            System.out.println("navCSP part "+i);
+            // System.out.println("element "+elem++);
             IntVar pointer = source[i].mul(ss).add(j).intVar(); // = pointer arithm
             m.element(out[k++], table, pointer,0).post();
         }
@@ -56,13 +57,13 @@ public class App {
 
     public static void main(String[] args) {
         // Problem Size
-        int objects=20;
-        int n=3; //MaxCard
-        int r=3; //navigations
-        int magic =10; //how many attributes are the same
+        int objects=5;
+        int n=2; //MaxCard
+        int r=2; //navigations
+        int magic =20; //how many different attributes
 
-        // Object we apply the constraints to (IDs start at 1)
-        int startObj = 1;
+        // Object we apply the subset sum to
+        int startObj = 0;
 
         // Make Data
         int[] attribs = new int[objects];
@@ -78,36 +79,54 @@ public class App {
         IntVar[][] table = m.intVarMatrix("table",objects, n, 0, objects); //objectsXn variables of domain of size objects
         IntVar dummy = m.intVar(0);
 
-        // IntVar[] vars = table[startObj];
-        // for(int i=0;i<r;i++){
-        //     vars = navCSP(vars, table, 0, n, dummy);
-        // }
-        IntVar[] vars = navCSP(table[startObj], attribTable, 0, magic+10, dummy);
+        IntVar[] vars = table[startObj];
+        for(int i=0;i<r;i++){
+            vars = navCSP(vars, table, 0, objects+10, dummy);
+        }
+        vars = navCSP(vars, attribTable, -(magic*magic), magic*magic, dummy);
 
         m.allDifferentExcept0(vars).post();
         // m.allDifferent(vars).post();
 
-        IntVar sum = m.intVar("sum",0, 1000);
+        IntVar sum = m.intVar(47);
         m.sum(vars, "=", sum).post();
-        m.setObjective(true, sum);
 
-        m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.flatten(table)), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
+        // m.setObjective(true, sum);
 
-        List<Solution> front = m.getSolver().findParetoFront(ArrayUtils.flatten(table),Model.MAXIMIZE); 
-        System.out.println("The pareto front has "+front.size()+" solutions : ");
-        for(Solution s: front){
-                System.out.println(s);
-        }
+        // m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.flatten(table)), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
+        // m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.concat(vars,ArrayUtils.flatten(table))), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
 
-
-
-        // Solution solution = m.getSolver().findSolution();
-        // if(solution != null){
-        //     System.out.println(solution.toString());
-        // } else {
-        //     System.out.println("mmmhh");
+        // List<Solution> front = m.getSolver().findParetoFront(ArrayUtils.flatten(table),Model.MAXIMIZE); 
+        // System.out.println("The pareto front has "+front.size()+" solutions : ");
+        // for(Solution s: front){
+        //         System.out.println(s);
         // }
 
 
+
+        Solution solution = m.getSolver().findSolution();
+        if(solution != null){
+            // System.out.println(solution.toString());
+            for (int o=0;o<objects;o++){
+                String line = "object "+(o+1)+":"+attribs[o]+" -> ";
+                for (int i=0;i<n;i++) line += table[o][i].getValue()+" ";
+                System.out.println(line);
+            }
+            String line = "attributes connected to object 1 via navigation (n="+n+", r="+r+")\n";
+            for(var v : vars){
+                line += v.getValue()+" ";
+            }
+            System.out.println(line);
+        } else {
+            for (int o=0;o<objects;o++){
+                String line = "object "+o+":"+attribs[o]+" -> ";
+                // for (int i=0;i<n;i++) line += table[o][i].getValue()+" ";
+                System.out.println(line);
+            }
+
+            System.out.println("mmmhh");
+        }
+
+        
     }
 }
