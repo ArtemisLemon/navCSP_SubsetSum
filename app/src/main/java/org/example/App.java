@@ -57,18 +57,28 @@ public class App {
 
     public static void main(String[] args) {
         // Problem Size
-        int objects=5;
-        int n=2; //MaxCard
-        int r=2; //navigations
-        int magic =20; //how many different attributes
+        int objects=80;
+        int n=5; //MaxCard
+        int r=6; //navigations
+        int multi=20; //number of different elements
+        int first=10; //value of first elements
+        int xtrm=1000; //domain extremes
+        // int tgtsum = 10; //Min subset sum
+        // int tgtsum = (objects/2)*(first + (first+objects-1)); //Max subset sum
+        int tgtsum = 1;
 
         // Object we apply the subset sum to
         int startObj = 0;
 
         // Make Data
         int[] attribs = new int[objects];
-        for(int i=0;i<objects;i++) attribs[i]= i%magic +10;
-        // shuffleArray(attribs);
+        for(int i=0;i<objects;i++) attribs[i] = i%multi+first;
+        // for(int i=0;i<objects;i++) attribs[i]= i;
+        // attribs[objects/2]=objects;
+        // for(int i=0;i<objects;i++) attribs[i]-=(objects/2);
+        shuffleArray(attribs);
+        // for(int i=0;i<objects;i++) if(i%2!=0) attribs[i]*=-1;
+
         IntVar[][] attribTable = new IntVar[objects][1]; //objects number of variables of domain of size 1
         for(int i=0;i<objects;i++){
             attribTable[i][0] = m.intVar("attrib",attribs[i]);
@@ -81,20 +91,20 @@ public class App {
 
         IntVar[] vars = table[startObj];
         for(int i=0;i<r;i++){
-            vars = navCSP(vars, table, 0, objects+10, dummy);
+            vars = navCSP(vars, table, 0, xtrm, dummy);
         }
-        vars = navCSP(vars, attribTable, -(magic*magic), magic*magic, dummy);
+        vars = navCSP(vars, attribTable, -xtrm, xtrm, dummy);
 
         m.allDifferentExcept0(vars).post();
         // m.allDifferent(vars).post();
 
-        IntVar sum = m.intVar(47);
+        IntVar sum = m.intVar(tgtsum);
         m.sum(vars, "=", sum).post();
 
         // m.setObjective(true, sum);
 
         // m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.flatten(table)), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
-        // m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.concat(vars,ArrayUtils.flatten(table))), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
+        m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.concat(vars,ArrayUtils.flatten(table))), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
 
         // List<Solution> front = m.getSolver().findParetoFront(ArrayUtils.flatten(table),Model.MAXIMIZE); 
         // System.out.println("The pareto front has "+front.size()+" solutions : ");
@@ -112,21 +122,20 @@ public class App {
                 for (int i=0;i<n;i++) line += table[o][i].getValue()+" ";
                 System.out.println(line);
             }
-            String line = "attributes connected to object 1 via navigation (n="+n+", r="+r+")\n";
+            String line = "attributes connected to object 1 via navigation (|O|="+objects+", n="+n+", r="+r+")\n";
             for(var v : vars){
                 line += v.getValue()+" ";
             }
             System.out.println(line);
         } else {
             for (int o=0;o<objects;o++){
-                String line = "object "+o+":"+attribs[o]+" -> ";
+                String line = "object "+(o+1)+":"+attribs[o]+" -> ";
                 // for (int i=0;i<n;i++) line += table[o][i].getValue()+" ";
                 System.out.println(line);
             }
 
             System.out.println("mmmhh");
         }
-
-        
+        m.getSolver().printStatistics();
     }
 }
