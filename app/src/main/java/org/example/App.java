@@ -18,23 +18,20 @@ import org.chocosolver.util.tools.ArrayUtils;
 
 public class App {
     static Model m = new Model();
-    static int elem = 0;
-
 
     static IntVar[] navCSP(IntVar[] source, IntVar[][] sources, int lb, int ub, IntVar dummy){
-        int s = source.length;
-        int ss = sources[0].length;
-        int sss = s*ss;
-        IntVar[] out = m.intVarArray(sss,lb,ub);
-        IntVar[] dummies = new IntVar[ss]; for(int i=0;i<ss;i++) dummies[i] = dummy;//copy dummy ss times
+        int n = source.length; // N
+        int nn = sources[0].length; //N'
+        int nnn = n*nn;
+        IntVar[] out = m.intVarArray(nnn,lb,ub);
+        IntVar[] dummies = new IntVar[nn]; for(int i=0;i<nn;i++) dummies[i] = dummy;//copy dummy ss times
         // IntVar[] table = ArrayUtils.concat(ArrayUtils.flatten(sources),dummies); //flatten sources, dummies at the end (ub--)
-        IntVar[] table = ArrayUtils.concat(dummies, ArrayUtils.flatten(sources)); //flatten sources, dummies at the end (lb++)
+        IntVar[] table = ArrayUtils.concat(dummies, ArrayUtils.flatten(sources)); //flatten sources, dummies at the beginning (lb++)
         
         // for(int i=0;i<sss;i++) m.element(out[i], table, pointer,0);
         int k=0;
-        for(int i=0; i<s;i++) for(int j=0;j<ss;j++){
-            // System.out.println("element "+elem++);
-            IntVar pointer = source[i].mul(ss).add(j).intVar(); // = pointer arithm
+        for(int i=0; i<n;i++) for(int j=0;j<nn;j++){
+            IntVar pointer = source[i].mul(nn).add(j).intVar(); // = pointer arithm
             m.element(out[k++], table, pointer,0).post();
         }
         return out;
@@ -57,37 +54,30 @@ public class App {
 
     public static void main(String[] args) {
         // Problem Size
-        int objects=80;
-        int n=5; //MaxCard
-        int r=6; //navigations
+        int objects=120; //number of objects, and size of domains
+        int n=10; //MaxCard
+        int r=2; //navigations
         int multi=20; //number of different elements
-        int first=10; //value of first elements
-        int xtrm=1000; //domain extremes
-        // int tgtsum = 10; //Min subset sum
-        // int tgtsum = (objects/2)*(first + (first+objects-1)); //Max subset sum
-        int tgtsum = 1;
+        int first=10; //first value of multiset
+        int tgtsum = 33; //target sum
+        int xtrm=1000; //domain extremes to init intermediate variables
 
-        // Object we apply the subset sum to
-        int startObj = 0;
+        // Object we start the search for the subset from
+        int startObj = 0; //0 in the object.table, will have 1 as pointer value (in nav tables)
 
         // Make Data
         int[] attribs = new int[objects];
         for(int i=0;i<objects;i++) attribs[i] = i%multi+first;
-        // for(int i=0;i<objects;i++) attribs[i]= i;
-        // attribs[objects/2]=objects;
-        // for(int i=0;i<objects;i++) attribs[i]-=(objects/2);
         shuffleArray(attribs);
-        // for(int i=0;i<objects;i++) if(i%2!=0) attribs[i]*=-1;
-
-        IntVar[][] attribTable = new IntVar[objects][1]; //objects number of variables of domain of size 1
+        IntVar[][] attribTable = new IntVar[objects][1]; //variables holding instance model constants
         for(int i=0;i<objects;i++){
             attribTable[i][0] = m.intVar("attrib",attribs[i]);
             System.out.println(attribTable[i][0].getValue());
         }
 
 
-        IntVar[][] table = m.intVarMatrix("table",objects, n, 0, objects); //objectsXn variables of domain of size objects
-        IntVar dummy = m.intVar(0);
+        IntVar[][] table = m.intVarMatrix("table",objects, n, 0, objects); //objects*n variables of domain of size objects
+        IntVar dummy = m.intVar(0); //nullptr
 
         IntVar[] vars = table[startObj];
         for(int i=0;i<r;i++){
@@ -95,25 +85,22 @@ public class App {
         }
         vars = navCSP(vars, attribTable, -xtrm, xtrm, dummy);
 
-        m.allDifferentExcept0(vars).post();
-        // m.allDifferent(vars).post();
+        m.allDifferentExcept0(vars).post(); //AllDiff Except nullptr
+        // m.allDifferent(vars).post(); //means all links must be used
 
         IntVar sum = m.intVar(tgtsum);
         m.sum(vars, "=", sum).post();
 
-        // m.setObjective(true, sum);
-
+        // Two different search strategies tested, the third one being "none"
+        // Here select which variables are "important", the first to choose when searching
+        // The first of these two strategies searching in "problem variables" from the UML CSP
         // m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.flatten(table)), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
         m.getSolver().setSearch(Search.intVarSearch(ArrayUtils.concat(vars,ArrayUtils.flatten(table))), Search.inputOrderLBSearch(m.retrieveIntVars(true)));
-
-        // List<Solution> front = m.getSolver().findParetoFront(ArrayUtils.flatten(table),Model.MAXIMIZE); 
-        // System.out.println("The pareto front has "+front.size()+" solutions : ");
-        // for(Solution s: front){
-        //         System.out.println(s);
-        // }
+        // The second also searches in the "top most" OCL CSP variables, upon which the constraints are applied. It seems to be what provides quick disproving despite large wholes in the data
 
 
-
+        // Here we start the Solver
+        System.out.println("Model Built with "+m.getNbIntVar(false)+" variables");
         Solution solution = m.getSolver().findSolution();
         if(solution != null){
             // System.out.println(solution.toString());
@@ -129,11 +116,9 @@ public class App {
             System.out.println(line);
         } else {
             for (int o=0;o<objects;o++){
-                String line = "object "+(o+1)+":"+attribs[o]+" -> ";
-                // for (int i=0;i<n;i++) line += table[o][i].getValue()+" ";
+                String line = "object "+(o+1)+":"+attribs[o];
                 System.out.println(line);
             }
-
             System.out.println("mmmhh");
         }
         m.getSolver().printStatistics();
