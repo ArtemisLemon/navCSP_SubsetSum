@@ -16,3 +16,12 @@ Dimensions:
 - multi : number of different elements in the multiset
 - first : first value of the multiset
 - target : target sum of the problem
+
+## Compilation & exécution
+```bash
+# build
+./gradlew build
+
+# run
+./gradlew run
+```
