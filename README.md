@@ -10,10 +10,9 @@ Context Obj inv:
 ```
 
 Dimensions:
-n : number of pointers to model ref
-r : query depth
-objects : number of elements in the multiset
-
-multi : number of different elements in the multiset
-first : first value of the multiset
-target : target sum of the problem
+- n : number of pointers to model ref
+- r : query depth
+- objects : number of elements in the multiset
+- multi : number of different elements in the multiset
+- first : first value of the multiset
+- target : target sum of the problem
