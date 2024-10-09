@@ -28,3 +28,4 @@ Context Obj inv:
 ## the Multiset
 - if `multi=4` and `first=10` the multiset will look like \{10,11,12,13,10,11,..\} repeating
 - if `objects=5` and the above, the multiset will be \{10,11,12,13,10\}
+- if `target=33` \{10,13\} would be a solution, if `target=0` \{\} is a solution, this multiset can't sum up to `target=1`
