@@ -9,7 +9,7 @@ Context Obj inv:
     query->isUnique(attribute)
 ```
 
-Dimensions:
+## Dimensions:
 - n : number of pointers to model ref
 - r : query depth
 - objects : number of elements in the multiset
@@ -25,3 +25,6 @@ Dimensions:
 # run
 ./gradlew run
 ```
+## the Multiset
+- if `multi=4` and `first=10` the multiset will look like \[10,11,12,13,10,11,..\] repeating
+- if `objects=5` and the above, the multiset will be \[10,11,12,13,10\]
