@@ -29,3 +29,8 @@ Context Obj inv:
 - if `multi=4` and `first=10` the multiset will look like \{10,11,12,13,10,11,..\} repeating
 - if `objects=5` and the above, the multiset will be \{10,11,12,13,10\}
 - if `target=33` \{10,13\} would be a solution, if `target=0` \{\} is a solution, this multiset can't sum up to `target=1`
+
+## the paths to SubSets
+Finding a solution in our context means finding a path of n steps, from the first element, to a subset fitting the constraints. 
+![subsetsumpath](readme/subsetsumpath.png)
+In the image, any number of steps from 10 reaches a subset summing to 33.
