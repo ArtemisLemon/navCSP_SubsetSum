@@ -13,12 +13,16 @@ Context Obj inv:
 ## Dimensions:
 - n : number of pointers to model ref
 - r : query depth
-  - `obj.ref` -> r=0
-  - `obj.ref.ref` -> r=1
 - objects : number of elements in the multiset
 - multi : number of different elements in the multiset
 - first : first value of the multiset
 - target : target sum of the problem
+
+### notes:
+- n + r > 10 generate very large models in memory
+- query depth is counted from the first variable navigation
+  - `obj.ref` -> r=0 : variable property access
+  - `obj.ref.ref` -> r=1 : variable navigation
 
 ## Compilation & exécution
 ```bash
@@ -64,18 +68,10 @@ This growth is most affected by depth, and number of pointers per reference (wid
 <!-- ![queryatoms](readme/queryatoms.png | width=50) -->
 <img src="readme/queryatoms.png" width=50%/>
 
-The graph in Figure 5 starts at 1 on the x,y axes or 𝑓 (1, 1),
-which gives 1 on the z axis (log scale). For a single naviga-
-tion from a single pointer variable (AdjList of size 1), we
-have a single element constraint. For a single navigation
-from an AdjList of size 10 or 𝑓 (10, 1), we have 100 element
-constraints. For AdjList variables of size 1, navigating with
-a query depth of 10 or 𝑓 (1, 10), results in 10 element con-
-straints.
-On the left background, we can see the curve resulting
-from increasing AdjList size. While on the right, we can
-see the the curve resulting from increasing navigation depth.
-We can see from this that increasing the navigation seems
-to increase the size of the problem logarithmically, while
-increasing the number of pointers for a reference is expo-
-nential.
+The graph in Figure 5 starts at 1 on the x,y axes or 𝑓 (1, 1), which gives 1 on the z axis (log scale). 
+- For a single navigation from a single pointer variable (AdjList of size 1), wehave a single query atom. 
+- For a single navigation from an AdjList of size 10 or 𝑓 (10, 1), we have 100 query atoms.
+- For AdjList variables of size 1, navigating witha query depth of 10 or 𝑓 (1, 10), results in 10 query atoms.
+
+On the left background, we can see the curve resulting from increasing AdjList size. While on the right, we can see the the curve resulting from increasing navigation depth.
+We can see from this that increasing the navigation seems to increase the size of the problem logarithmically, while increasing the number of pointers for a reference is exponential.
