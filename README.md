@@ -36,3 +36,5 @@ Finding a solution in our context means finding a path of n steps, from the firs
 ![subsetsumpath](readme/subsetsumpath.png)
 
 In the image, any number of steps from 10 reaches a subset summing to 33.
+To take a step, one follows all the outgoing arrows from the current collection of objects.
+From \{10\} we reach \{11,12\} in one step, from \{11,12\} we reach \{10,13\} in one step, and from \{10,13\} we step back to \{11,12\}.
