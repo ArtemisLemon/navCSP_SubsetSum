@@ -9,6 +9,10 @@ Context Obj inv:
     query->isUnique(attribute)
 ```
 
+## Paper
+![Towards Enforcing Structural OCL Constraints using
+Constraint Programming](readme/OCL2CSP_var_navCSP.pdf)
+
 ## Dimensions:
 - n : number of pointers to model ref
 - r : query depth
