@@ -1,4 +1,5 @@
 # navCSP test: Subset Sum
+![Towards Enforcing Structural OCL Constraints using Constraint Programming](readme/OCL2CSP_var_navCSP.pdf)
 
 ```
 class Obj { ref : 0-* reference, attribute : int}
@@ -8,10 +9,6 @@ Context Obj inv:
     query->sum(attribute) = Target and
     query->isUnique(attribute)
 ```
-
-## Paper
-![Towards Enforcing Structural OCL Constraints using
-Constraint Programming](readme/OCL2CSP_var_navCSP.pdf)
 
 ## Dimensions:
 - n : number of pointers to model ref
