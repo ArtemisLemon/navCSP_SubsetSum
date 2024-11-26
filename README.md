@@ -37,9 +37,17 @@ To take a step, one leaves the current nodes and follows all the outgoing arrows
 ![subsetsumpath](readme/subsetsumpath.png)
 
 In the image, any number of steps (>0) from 10 reaches a subset summing to 33.
-From \{10\} we reach \{11,12\} in one step (`obj.ref`), from \{11,12\} we reach \{10,13\} with an additional step (`obj.ref.ref`), and from \{10,13\} we step back to \{11,12\} (`obj.ref.ref.ref`).
+From \{10\} we reach \{11,12\} in one step, from \{11,12\} we reach \{10,13\} with an additional step, and from \{10,13\} we step back to \{11,12\}.
 The properties of the objects, including adjacency lists where `n=2` and `nullptr=0`:
 - 1 -> ref=\{2,3\}, attrib=10
 - 2 -> ref=\{1,0\}, attrib=11
 - 3 -> ref=\{4,0\}, attrib=12
 - 4 -> ref=\{0,0\}, attrib=13
+
+Some example expresion evaluations:
+- `obj.ref` -> \{2,3\}
+- `obj.ref.attrib` -> \{11,12\}
+- `obj.ref.ref` -> \{1,4\}
+- `obj.ref.ref.attrib` -> \{10,13\}
+- `obj.ref.ref.ref` -> \{2,3\}
+- `obj.ref.ref.ref.attrib` -> \{11,12\}
