@@ -38,8 +38,8 @@ To take a step, one leaves the current nodes and follows all the outgoing arrows
 
 In the image, any number of steps (>0) from 10 reaches a subset summing to 33.
 From \{10\} we reach \{11,12\} in one step (`obj.ref`), from \{11,12\} we reach \{10,13\} with an additional step (`obj.ref.ref`), and from \{10,13\} we step back to \{11,12\} (`obj.ref.ref.ref`).
-The adjacendy lists would be:
-- 10 -> \{11,12\}
-- 11 -> \{10\}
-- 12 -> \{13\}
-- 13 -> \{\}
+The adjacendy lists would be, if `n=2` and `nullptr=0`:
+- 1 -> \{2,3\}
+- 2 -> \{1,0\}
+- 3 -> \{4,0\}
+- 4 -> \{0,0\}
