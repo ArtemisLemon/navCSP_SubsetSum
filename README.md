@@ -47,9 +47,9 @@ The properties of the objects, including adjacency lists where `n=2` and `nullpt
 Some example expresion evaluations:
 - `obj.ref` -> \{2,3\}
 - `obj.ref.attrib` -> \{11,12\}
-- `obj.ref.ref` -> \{1,4\}
-- `obj.ref.ref.attrib` -> \{10,13\}
-- `obj.ref.ref.ref` -> \{2,3\}
-- `obj.ref.ref.ref.attrib` -> \{11,12\}
+- `obj.ref.ref` -> \{1,0,4,0\}
+- `obj.ref.ref.attrib` -> \{10,0,13,0\}
+- `obj.ref.ref.ref` -> \{2,3,0,0,0,0,0,0\}
+- `obj.ref.ref.ref.attrib` -> \{11,12,0,0,0,0,0,0\}
 - `obj.ref.ref.ref.attrib.sum()` -> 33
 - `obj.ref.ref.ref.attrib.isUnique()` -> true
