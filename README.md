@@ -32,9 +32,9 @@ Context Obj inv:
 
 ## the paths to SubSets
 Finding a solution in our context means finding a path of n steps, from the first element, to a subset fitting the constraints.
+To take a step, one leaves the current nodes and follows all the outgoing arrows.
 
 ![subsetsumpath](readme/subsetsumpath.png)
 
-In the image, any number of steps from 10 reaches a subset summing to 33.
-To take a step, one leaves the current nodes and follows all the outgoing arrows.
-From \{10\} we reach \{11,12\} in one step, from \{11,12\} we reach \{10,13\} in one step, and from \{10,13\} we step back to \{11,12\}.
+In the image, any number of steps (>0) from 10 reaches a subset summing to 33.
+From \{10\} we reach \{11,12\} in one step (`obj.ref`), from \{11,12\} we reach \{10,13\} in one step (`obj.ref.ref`), and from \{10,13\} we step back to \{11,12\} (`obj.ref.ref.ref`).
