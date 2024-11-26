@@ -51,3 +51,5 @@ Some example expresion evaluations:
 - `obj.ref.ref.attrib` -> \{10,13\}
 - `obj.ref.ref.ref` -> \{2,3\}
 - `obj.ref.ref.ref.attrib` -> \{11,12\}
+- `obj.ref.ref.ref.attrib.sum()` -> 33
+- `obj.ref.ref.ref.attrib.isUnique()` -> true
