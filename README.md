@@ -64,7 +64,7 @@ Some example expresion evaluations:
 To model the query, we need query atoms (intermediate variables and constraints). This is hinted at in the evaluation on expressions, where the lists of pointers and attributes grow with depth.
 This growth is most affected by depth, and number of pointers per reference (width).
 
-![queryatoms](readme/queryatoms.png =200x)
+![queryatoms](readme/queryatoms.png | width=50)
 
 The graph in Figure 5 starts at 1 on the x,y axes or 𝑓 (1, 1),
 which gives 1 on the z axis (log scale). For a single naviga-
