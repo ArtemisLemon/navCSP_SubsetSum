@@ -34,4 +34,5 @@ Context Obj inv:
 Finding a solution in our context means finding a path of n steps, from the first element, to a subset fitting the constraints.
 
 ![subsetsumpath](readme/subsetsumpath.png)
+
 In the image, any number of steps from 10 reaches a subset summing to 33.
